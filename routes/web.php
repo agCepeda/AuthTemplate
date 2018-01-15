@@ -14,3 +14,9 @@
 $app->get('/', function () use ($app) {
     return $app->version();
 });
+
+$app->group(['prefix' => 'auth'], function () use ($app) {
+	$app->get('login', 'AuthController@getLogin');
+	$app->post('login', 'AuthController@postLogin');
+	$app->get('logout', 'AuthController@anyLogout');
+});
