@@ -8,14 +8,18 @@ class AuthMiddleware
 {
     public function handle($request, Closure $next)
     {
-    	$sessionToken = $request->session()->get('AUTH_SESSION_TOKEN');
+        $authToken = $request->headers()->get('Authorization');
 
-    	$session = Session::where('token', $sessionToken)
+        if (! $authToken) {
+            $authToken = $request->get('authToken');
+        }
+
+    	$session = Session::where('token', $authToken)
     					->with('user')
     					->first();
 
     	if (! $session || ! $session->isValid()) {
-    		return redirect('/');
+            return response()->json(['message' => 'Mensaje de error.']);
     	}
 
         return $next($request);

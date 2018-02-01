@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 
 use App\Repositories\AuthRepository;
-use \Exception as AuthException;
+use App\Session;
 
 class AuthController extends Controller
 {
@@ -29,23 +29,15 @@ class AuthController extends Controller
 		
 		$authRepository = new AuthRepository;
 
-		$session = null;
-
-		try {
-			$session = $authRepository->loginWithCredentials([
-				'username' => $request->get('username'),
-				'password' => $request->get('password'),
-			]);
-		} catch(AuthException $ex) {
-			app('log')->debug($ex);
-			return back()->withErrors($ex->getMessage());
-		}
-
-
-		return redirect('/');
+		return $authRepository
+					->loginWithCredentials([
+						'username' => $request->get('username'),
+						'password' => $request->get('password'),
+					]);
+		
 	}
 
-	public function anyLogout()
+	public function anyLogout(Session $session)
 	{
 	}
 }
